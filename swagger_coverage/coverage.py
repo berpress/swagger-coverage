@@ -7,9 +7,9 @@ from typing import Dict
 import yaml
 import requests
 
-from test_swagger_coverage.models import SwaggerData, EndpointStatisticsHtml, \
+from swagger_coverage.models import SwaggerData, EndpointStatisticsHtml, \
     PercentStatistic
-from test_swagger_coverage.singltone_like import Singleton
+from swagger_coverage.singltone_like import Singleton
 
 logger = logging.getLogger('swagger')
 

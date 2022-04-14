@@ -4,7 +4,7 @@ import shutil
 import logging
 from os.path import exists
 
-from test_swagger_coverage.models import SwaggerData, EndpointStatisticsHtml
+from swagger_coverage.models import SwaggerData, EndpointStatisticsHtml
 
 logger = logging.getLogger('swagger')
 

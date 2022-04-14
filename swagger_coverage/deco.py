@@ -1,6 +1,6 @@
 from functools import wraps
 
-from test_swagger_coverage.swagger_coverage import Swagger
+from swagger_coverage.coverage import Swagger
 
 
 def swagger(key):

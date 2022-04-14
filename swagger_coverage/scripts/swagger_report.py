@@ -3,8 +3,8 @@ import argparse
 import logging.config
 import sys
 
-from test_swagger_coverage.logging import setup
-from test_swagger_coverage.swagger_coverage import Swagger
+from swagger_coverage.coverage import Swagger
+from swagger_coverage.logging import setup
 
 logger = logging.getLogger()
 

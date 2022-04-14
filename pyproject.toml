@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "test-swagger-coverage"
-version = "0.1.21"
+version = "0.1.26"
 description = "Swagger coverage for API tests"
 authors = ["alexanderlozovoy <berpress@gmail.com>"]
-packages = [{ include = "test_swagger_coverage" }]
+packages = [{ include = "swagger_coverage" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 requests = "^2.27.1"
 PyYAML = "^6.0"
 attrs = "^21.4.0"
@@ -20,4 +20,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-swagger_coverage = "test_swagger_coverage.scripts.swagger_report:main"
+swagger_coverage = "swagger_coverage.scripts.swagger_report:main"

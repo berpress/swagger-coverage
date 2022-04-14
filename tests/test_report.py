@@ -3,8 +3,9 @@ import os
 from os.path import exists, dirname, abspath
 
 
-from test_swagger_coverage.report import ReportHtml
-from test_swagger_coverage.swagger_coverage import Swagger
+from swagger_coverage.report import ReportHtml
+from swagger_coverage.coverage import Swagger
+
 
 SWAGGER_URL = 'https://petstore.swagger.io/v2/swagger.json'
 
@@ -22,6 +23,6 @@ class TestSReport:
             api_url=SWAGGER_URL, swagger_url=SWAGGER_URL, data=swagger.result()
         )
         reporter.save_html(is_copy=False)
-        report_path = os.path.join(dirname(dirname(abspath(__file__))), 'tests',
+        report_path = os.path.join(dirname(dirname(abspath(__file__))),
                                    'swagger_report', 'index.html')  # noqa
         assert exists(report_path)
