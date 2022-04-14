@@ -3,6 +3,7 @@ name = "test-swagger-coverage"
 version = "0.1.21"
 description = "Swagger coverage for API tests"
 authors = ["alexanderlozovoy <berpress@gmail.com>"]
+packages = [{ include = "test_swagger_coverage" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
