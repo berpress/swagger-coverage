@@ -7,7 +7,7 @@ from os.path import exists, dirname, abspath
 
 from requests.exceptions import MissingSchema
 
-from litovsky_swagger_coverage.swagger_coverage import Swagger
+from test_swagger_coverage.swagger_coverage import Swagger
 
 SWAGGER_URL = 'https://petstore.swagger.io/v2/swagger.json'
 

@@ -4,7 +4,7 @@ import shutil
 import logging
 from os.path import exists
 
-from litovsky_swagger_coverage.models import SwaggerData, EndpointStatisticsHtml
+from test_swagger_coverage.models import SwaggerData, EndpointStatisticsHtml
 
 logger = logging.getLogger('swagger')
 
@@ -310,14 +310,14 @@ class ReportHtml:
         Copy folder with css and js files
         :return:
         """
-        # create src dir
-        parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        src_path = os.path.join(parent_dir, 'src')
-        self._create_dir(src_path)
+        # create path from library
         src_dir = os.path.dirname(os.path.abspath(__file__))
-        src_created_path = os.path.join(src_dir, 'src')
-        self._create_dir(src_created_path)
-        shutil.copyfile(os.path.join(src_path, 'script.js'), os.path.join(src_created_path, 'script.js'))
+        src_library_path = os.path.join(src_dir, 'src', 'script.js')
+        # create dir in project
+        parent_dir = os.path.abspath(os.path.abspath(os.curdir))
+        src_path_js = os.path.join(parent_dir, 'swagger_report', 'src', 'script.js')
+        self._create_dir(os.path.join(parent_dir, 'swagger_report', 'src'))
+        shutil.copyfile(src_library_path, src_path_js)
 
     def save_html(self, file_name: str = "index.html", is_copy=True):
         """

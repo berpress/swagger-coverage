@@ -1,6 +1,6 @@
 from functools import wraps
 
-from litovsky_swagger_coverage.swagger_coverage import Swagger
+from test_swagger_coverage.swagger_coverage import Swagger
 
 
 def swagger(key):
