@@ -11,3 +11,6 @@ Swagger coverage report for API tests
 
 
 make build
+
+
+[![Python tests](https://github.com/berpress/swagger-coverage/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/berpress/swagger-coverage/actions/workflows/python-app.yml)
