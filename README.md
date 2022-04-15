@@ -3,6 +3,7 @@
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/45afb8b947b1c7e9cec8/maintainability)](https://codeclimate.com/github/berpress/swagger-coverage/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/45afb8b947b1c7e9cec8/test_coverage)](https://codeclimate.com/github/berpress/swagger-coverage/test_coverage)
+[![PyPI version](https://badge.fury.io/py/test-swagger-coverage.svg)](https://badge.fury.io/py/test-swagger-coverage)
 
 About
 ------------
