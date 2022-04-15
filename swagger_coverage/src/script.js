@@ -15,28 +15,26 @@ const app = () => {
 
 
   state.all = accordions;
-  state.success = Array.from(accordions).filter((item) => {
+
+  const findStatusElement = (item, color) => {
     const button = item.querySelector('.accordion-header').querySelector('button');
     const status = button.getAttribute('style');
-    if (status === 'background-color: #60d891;') {
+    if (status === `background-color: ${color};`) {
       return item;
     }
+  }
+
+  state.success = Array.from(accordions).filter((item) => {
+    return findStatusElement(item, '#60d891')
   })
 
+
   state.failed = Array.from(accordions).filter((item) => {
-    const button = item.querySelector('.accordion-header').querySelector('button');
-    const status = button.getAttribute('style');
-    if (status === 'background-color: #F47174;') {
-      return item;
-    }
+    return findStatusElement(item, '#F47174')
   })
 
   state.notAdd= Array.from(accordions).filter((item) => {
-    const button = item.querySelector('.accordion-header').querySelector('button');
-    const status = button.getAttribute('style');
-    if (status === 'background-color: #F56b02;') {
-      return item;
-    }
+    return findStatusElement(item, '#F56b02')
   })
 
   const showBtnHandler = (event) => {
@@ -51,30 +49,15 @@ const app = () => {
     }
   };
 
-  const showAll = () =>  {
+  const showItems = (items) => {
     accordionsDiv.innerText = '';
-    Array.from(state.all).forEach(element => accordionsDiv.appendChild(element));
+    Array.from(items).forEach(element => accordionsDiv.appendChild(element));
   }
 
-  const showSuccess = () => {
-    accordionsDiv.innerText = '';
-    Array.from(state.success).forEach(element => accordionsDiv.appendChild(element));
-  }
-
-  const showFailed = () => {
-    accordionsDiv.innerText = '';
-    Array.from(state.failed).forEach(element => accordionsDiv.appendChild(element));
-  }
-
-  const showNotAdd = () => {
-    accordionsDiv.innerText = '';
-    Array.from(state.notAdd).forEach(element => accordionsDiv.appendChild(element));
-  }
-
-  allButton.addEventListener('click', showAll);
-  successButton.addEventListener('click', showSuccess);
-  failedButton.addEventListener('click', showFailed);
-  notAddButton.addEventListener('click', showNotAdd);
+  allButton.addEventListener('click', () => { showItems(state.all);});
+  successButton.addEventListener('click', () => { showItems(state.success);});
+  failedButton.addEventListener('click', () => { showItems(state.failed);});
+  notAddButton.addEventListener('click', () => { showItems(state.notAdd);});
   const accordionArray = Array.from(document.getElementsByClassName('accordion-button'));
   accordionArray.forEach(el => el.addEventListener('click', showBtnHandler));
 }
