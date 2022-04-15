@@ -8,7 +8,7 @@ build:
 	@poetry build
 
 publish:
-	@poetry publish -r pypi_test
+	@poetry publish
 
 pytest:
 	poetry run pytest
