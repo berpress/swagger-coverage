@@ -6,7 +6,7 @@ from os.path import exists
 
 from swagger_coverage.models import SwaggerData, EndpointStatisticsHtml
 
-logger = logging.getLogger('swagger')
+logger = logging.getLogger("swagger")
 
 
 class ReportHtml:
@@ -312,11 +312,11 @@ class ReportHtml:
         """
         # create path from library
         src_dir = os.path.dirname(os.path.abspath(__file__))
-        src_library_path = os.path.join(src_dir, 'src', 'script.js')
+        src_library_path = os.path.join(src_dir, "src", "script.js")
         # create dir in project
         parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        src_path_js = os.path.join(parent_dir, 'swagger_report', 'src', 'script.js')
-        self._create_dir(os.path.join(parent_dir, 'swagger_report', 'src'))
+        src_path_js = os.path.join(parent_dir, "swagger_report", "src", "script.js")
+        self._create_dir(os.path.join(parent_dir, "swagger_report", "src"))
         shutil.copyfile(src_library_path, src_path_js)
 
     def save_html(self, file_name: str = "index.html", is_copy=True):
@@ -326,10 +326,12 @@ class ReportHtml:
         body = self._body()
         html = self.html("Swagger coverage API", body)
         parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        with open(os.path.join(parent_dir, "swagger_report",
-                               file_name), "w") as outfile:
+        with open(
+            os.path.join(parent_dir, "swagger_report", file_name), "w"
+        ) as outfile:
             outfile.write(html)
         if is_copy:
             self._copy_src_folder()
-        logger.info(f'The swagger report was successfully saved to the folder: '
-                    f'{parent_dir}')
+        logger.info(
+            f"The swagger report was successfully saved to the folder: " f"{parent_dir}"
+        )

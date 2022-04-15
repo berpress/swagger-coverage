@@ -1,7 +1,7 @@
 import logging
 import sys
 
-l_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+l_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 
 def setup(level: str):

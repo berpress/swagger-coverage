@@ -7,11 +7,14 @@ from typing import Dict
 import yaml
 import requests
 
-from swagger_coverage.models import SwaggerData, EndpointStatisticsHtml, \
-    PercentStatistic
+from swagger_coverage.models import (
+    SwaggerData,
+    EndpointStatisticsHtml,
+    PercentStatistic,
+)
 from swagger_coverage.singltone_like import Singleton
 
-logger = logging.getLogger('swagger')
+logger = logging.getLogger("swagger")
 
 
 class Swagger(metaclass=Singleton):
@@ -34,11 +37,14 @@ class Swagger(metaclass=Singleton):
 
     Report will be created in the folder 'swagger_report/index.html'
     """
+
     _TEST_SWAGGER_FILE_NAME = "data_swagger.yaml"
     _SWAGGER_REPORT_DIR = "swagger_report"
     _DEFAULT_STATUS_CODE = [200, 400, 401, 403]
 
-    def __init__(self, url: str = None, status_codes: list = None, file_name: str = None):
+    def __init__(
+        self, url: str = None, status_codes: list = None, file_name: str = None
+    ):
         self.url = url
         self.path_dict = None
         self.data = SwaggerData()
@@ -47,7 +53,6 @@ class Swagger(metaclass=Singleton):
             self.status_codes = self._DEFAULT_STATUS_CODE
         else:
             self.status_codes = [int(s) for s in status_codes]
-
 
     def _save_file(self, data: dict, path_file: str) -> None:
         """
@@ -90,7 +95,7 @@ class Swagger(metaclass=Singleton):
         """
         Load and get swagger data
         """
-        logger.info(f'Start load swagger {self.url}')
+        logger.info(f"Start load swagger {self.url}")
         res = requests.get(self.url)
         if res.status_code == 200:
             try:
@@ -103,7 +108,9 @@ class Swagger(metaclass=Singleton):
         else:
             logger.error(f"Couldn't get the file, status code is {res.status_code}")
 
-    def _create_swagger_test_file(self, is_safe: bool = False, path_file: str=None) -> None:
+    def _create_swagger_test_file(
+        self, is_safe: bool = False, path_file: str = None
+    ) -> None:
         """
         Create file for tests
         Prepare loaded swagger data
@@ -178,7 +185,7 @@ class Swagger(metaclass=Singleton):
             dict_data = copy.deepcopy(data_loaded)
             data_new = self._prepare_check_file_data(dict_data)
             self.data.swagger_data = data_new
-        logger.info('Data coverage creation completed successfully')
+        logger.info("Data coverage creation completed successfully")
 
     def _get_summary(self, diff: dict) -> [EndpointStatisticsHtml, PercentStatistic]:
         """

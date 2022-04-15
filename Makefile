@@ -2,7 +2,7 @@ install:
 	@poetry install
 
 lint:
-	@poetry run flake8 page_loader
+	@pre-commit run --all-files
 
 build:
 	@poetry build
