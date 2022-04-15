@@ -12,17 +12,18 @@ from swagger_coverage.models import (
     EndpointStatisticsHtml,
     PercentStatistic,
 )
+from swagger_coverage.report import ReportHtml
 from swagger_coverage.singltone_like import Singleton
 
 logger = logging.getLogger("swagger")
 
 
-class Swagger(metaclass=Singleton):
+class SwaggerCoverage(metaclass=Singleton):
     """
     Tool for calculating status coverage in api tests
     First, you need to create a file for verification, for example
 
-        swagger = Swagger(url='https://test.com', status_codes=[200, 400])
+        swagger = SwaggerCoverage(url='https://test.com', status_codes=[200, 400])
         swagger.create_coverage_data()
 
 
@@ -43,12 +44,22 @@ class Swagger(metaclass=Singleton):
     _DEFAULT_STATUS_CODE = [200, 400, 401, 403]
 
     def __init__(
-        self, url: str = None, status_codes: list = None, file_name: str = None
+        self,
+        url: str = None,
+        api_url: str = None,
+        status_codes: list = None,
     ):
+        """
+        Init Swagger Coverage
+        :param url:
+        :param api_url:
+        :param status_codes:
+        """
         self.url = url
         self.path_dict = None
         self.data = SwaggerData()
         self.prepare_data = None
+        self.api_url = api_url
         if status_codes is None:
             self.status_codes = self._DEFAULT_STATUS_CODE
         else:
@@ -104,7 +115,6 @@ class Swagger(metaclass=Singleton):
                 return data.get("paths")
             except Exception:
                 raise ValueError("Couldn't load yaml")
-                logger.error("Couldn't load yaml")
         else:
             logger.error(f"Couldn't get the file, status code is {res.status_code}")
 
@@ -143,7 +153,7 @@ class Swagger(metaclass=Singleton):
             for status in statuses:
                 for key in status.keys():
                     if key == status_code:
-                        status[key] = True
+                        status[key] = status.get("key", 0) + 1
                         return data
         return data
 
@@ -165,7 +175,7 @@ class Swagger(metaclass=Singleton):
             if statuses:
                 new_statuses = []
                 for s in statuses:
-                    new_statuses.append({s: False})
+                    new_statuses.append({s: 0})
                 value["statuses"] = new_statuses
         return data
 
@@ -198,14 +208,12 @@ class Swagger(metaclass=Singleton):
             is_checked_list = [
                 list(status.values())[0] for status in value.get("statuses")
             ]
-            count_success += len(
-                [status for status in is_checked_list if status is True]
-            )
+            count_success += len([status for status in is_checked_list if status > 0])
             count_of_unverified += len(
-                [status for status in is_checked_list if status is False]
+                [status for status in is_checked_list if status == 0]
             )
         count_diff = len(list(diff.items()))
-        count_total = count_success + count_of_unverified + count_diff
+        count_total = count_success + count_of_unverified
         # get percent
         percentage_success = self._percentage(count_success, count_total)
         percentage_unverified = self._percentage(count_of_unverified, count_total)
@@ -234,10 +242,20 @@ class Swagger(metaclass=Singleton):
             swagger_data = copy.deepcopy(self.path_dict)
         return self._data_diff(swagger_data, self.data.swagger_data)
 
-    def result(self):
+    def _result(self):
         """
         Get swagger check result, need for build html report
         """
         self.data.diff = self._swagger_diff()
         self.data.summary = self._get_summary(self.data.diff)
         return self.data
+
+    def create_report(self):
+        """
+        Save result in html file
+        :return:
+        """
+        reporter = ReportHtml(
+            api_url=self.api_url, swagger_url=self.url, data=self._result()
+        )
+        reporter.save_html()

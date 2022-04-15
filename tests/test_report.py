@@ -3,8 +3,7 @@ import os
 from os.path import exists, dirname, abspath
 
 
-from swagger_coverage.report import ReportHtml
-from swagger_coverage.coverage import Swagger
+from swagger_coverage.coverage import SwaggerCoverage
 
 
 SWAGGER_URL = "https://petstore.swagger.io/v2/swagger.json"
@@ -17,12 +16,11 @@ class TestSReport:
         """
         url = SWAGGER_URL
         status_codes = [200, 400]
-        swagger = Swagger(url=url, status_codes=status_codes)
-        swagger.create_coverage_data(file_name="swagger_files_exist.yaml")
-        reporter = ReportHtml(
-            api_url=SWAGGER_URL, swagger_url=SWAGGER_URL, data=swagger.result()
+        swagger = SwaggerCoverage(
+            url=url, api_url="api_test.com", status_codes=status_codes
         )
-        reporter.save_html(is_copy=False)
+        swagger.create_coverage_data(file_name="swagger_files_exist.yaml")
+        swagger.create_report()
         report_path = os.path.join(
             dirname(dirname(abspath(__file__))), "swagger_report", "index.html"
         )  # noqa

@@ -7,7 +7,7 @@ from os.path import exists, dirname, abspath
 
 from requests.exceptions import MissingSchema
 
-from swagger_coverage.coverage import Swagger
+from swagger_coverage.coverage import SwaggerCoverage
 
 SWAGGER_URL = "https://petstore.swagger.io/v2/swagger.json"
 
@@ -19,7 +19,7 @@ class TestSwagger:
         """
         url = SWAGGER_URL
         status_codes = [200, 400]
-        swagger = Swagger(url=url, status_codes=status_codes)
+        swagger = SwaggerCoverage(url=url, status_codes=status_codes)
         swagger.create_coverage_data(file_name="swagger_files_exist.yaml")
         report_dir = os.path.join(
             dirname(dirname(abspath(__file__))), "swagger_report"
@@ -32,7 +32,7 @@ class TestSwagger:
         """
         url = SWAGGER_URL
         status_codes = [200, 400]
-        swagger = Swagger(url=url, status_codes=status_codes)
+        swagger = SwaggerCoverage(url=url, status_codes=status_codes)
         swagger.create_coverage_data(file_name="swagger_data.yaml")
         report_path = os.path.join(
             dirname(dirname(abspath(__file__))), "swagger_report", "swagger_data.yaml"
@@ -47,11 +47,10 @@ class TestSwagger:
         """
         Checking with invalid url
         """
-        Swagger().clear()
         with pytest.raises(MissingSchema):
             url = "test.djhdhg"
             status_codes = [200, 400]
-            swagger = Swagger(url=url, status_codes=status_codes)
+            swagger = SwaggerCoverage(url=url, status_codes=status_codes)
             swagger.create_coverage_data(file_name="swagger_invalid_url.yaml")
             report_dir = os.path.join(
                 dirname(dirname(abspath(__file__))), "swagger_report"
@@ -66,7 +65,7 @@ class TestSwagger:
         with pytest.raises(ValueError):
             url = "https://github.com/berpress"
             status_codes = [200, 400]
-            swagger = Swagger(url=url, status_codes=status_codes)
+            swagger = SwaggerCoverage(url=url, status_codes=status_codes)
             swagger.create_coverage_data(file_name="swagger_none_exist_url.yaml")
             report_dir = os.path.join(
                 dirname(dirname(abspath(__file__))), "swagger_report"

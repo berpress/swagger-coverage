@@ -3,7 +3,7 @@ import argparse
 import logging.config
 import sys
 
-from swagger_coverage.coverage import Swagger
+from swagger_coverage.coverage import SwaggerCoverage
 from swagger_coverage.logging import setup
 
 logger = logging.getLogger()
@@ -34,7 +34,7 @@ def main():
         raise ValueError("Check logger level")
     setup(logging_level)
     logger.setLevel(logging_level)
-    swagger = Swagger(url=url, status_codes=status_codes)
+    swagger = SwaggerCoverage(url=url, status_codes=status_codes)
     swagger.create_coverage_data()
 
 

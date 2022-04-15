@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 
 import logging
@@ -206,18 +207,18 @@ class ReportHtml:
         """
         id, color, description, sections
         """
+        text_description = self._camel_terms_to_str(endpoint)
         description = (
-            f'<b>{value.get("description")}</b> '
-            f'({value.get("method")} {value.get("path")})'
+            f"<b>{text_description}</b> " f'({value.get("method")} {value.get("path")})'
         )
         is_checked_list = [list(status.values())[0] for status in value.get("statuses")]
         if color is None:
             color = self._COLOR_RED if False in is_checked_list else self._COLOR_GREEN
 
-        sections = []
-        for status in value.get("statuses"):
-            res = self._create_section(status)
-            sections.append(res)
+        table_rows = []
+        for count, row in enumerate(value.get("statuses")):
+            res = self._create_table_body(count + 1, row)
+            table_rows.append(res)
 
         return f"""
         <div class="accordion-item">
@@ -231,12 +232,43 @@ class ReportHtml:
             </h2>
         <div class="accordion-collapse collapse" aria-labelledby="flush-headingOne"
             data-bs-parent="#accordionFlushExample" data-state="collapse">
-                <div class="accordion-body"> <section>
-                    {"".join(sections)} </section>
-        </div>
-            </div>
+                <div class="accordion-body">
+                    <section>
+                        Description: {value.get('description')}
+                        {self._create_table(''.join(table_rows))}
+                    </section>
                 </div>
+            </div>
+        </div>
                 """  # noqa
+
+    def _create_table(self, rows):
+        """
+        Create table in accordion
+        """
+        return f""" <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Status code</th>
+                          <th scope="col">Number of calls</th>
+                        </tr>
+                      </thead>
+                      {rows}
+                    </table>
+        """
+
+    def _create_table_body(self, count: int, status: dict) -> str:
+        st, result = list(status.items())[0]
+        color = "green" if result else "red"
+        return f"""<tbody>
+                        <tr>
+                          <th scope="row">{count}</th>
+                          <td><p style="color:{color};">{st}</p></td>
+                          <td>{result}</td>
+                        </tr>
+                      </tbody>
+                      """
 
     @staticmethod
     def _create_accordion_diff(endpoint, value, color: str = None):
@@ -269,7 +301,6 @@ class ReportHtml:
         return f"""
                 <textarea class="form-control" rows="3">{text}</textarea>
                 """
-        pass
 
     def _create_diff_accordion_html(self):
         """
@@ -295,8 +326,6 @@ class ReportHtml:
             text.append(f"{spaces}statuses:\n")
             text.append(f"{spaces}- 200\n")
             text.append(f"{spaces}- 400\n")
-            text.append(f"{spaces}- 401\n")
-            text.append(f"{spaces}- 403\n")
             text.append(f'{spaces}tag: {values.get("tag")} \n')
         return "".join(text)
 
@@ -318,6 +347,18 @@ class ReportHtml:
         src_path_js = os.path.join(parent_dir, "swagger_report", "src", "script.js")
         self._create_dir(os.path.join(parent_dir, "swagger_report", "src"))
         shutil.copyfile(src_library_path, src_path_js)
+
+    @staticmethod
+    def _camel_terms_to_str(value):
+        """
+        From CamelCase to String
+        """
+        result = re.findall(
+            "[A-Z][a-z]+|[0-9A-Z]+(?=[A-Z][a-z])|[0-9A-Z]{2,}|[a-z0-9]{2,}|[a-zA-Z0-9]",
+            value,
+        )  # noqa
+        result[0] = result[0].capitalize()
+        return " ".join(result)
 
     def save_html(self, file_name: str = "index.html", is_copy=True):
         """

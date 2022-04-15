@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "test-swagger-coverage"
-version = "0.1.31"
+version = "0.1.33"
 description = "Swagger coverage for API tests"
 authors = ["alexanderlozovoy <berpress@gmail.com>"]
 packages = [{ include = "swagger_coverage" }]

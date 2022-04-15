@@ -1,6 +1,6 @@
 from functools import wraps
 
-from swagger_coverage.coverage import Swagger
+from swagger_coverage.coverage import SwaggerCoverage
 
 
 def swagger(key):
@@ -8,7 +8,7 @@ def swagger(key):
         @wraps(function)
         def inner(*args, **kwargs):
             res = function(*args, **kwargs)
-            Swagger().swagger_check(key, res)
+            SwaggerCoverage().swagger_check(key, res)
             return res
 
         return inner

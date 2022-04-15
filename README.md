@@ -9,7 +9,7 @@ About
 
 Swagger coverage report helps the QA automation and developer to get a simple API coverage report for endpoints tests
 
-![](https://github.com/berpress/python-api-tests/blob/main/images/swagger_report.png)
+![](https://github.com/berpress/python-api-tests/blob/main/images/swagger_report_2.png)
 
 Installation
 ------------
@@ -83,13 +83,13 @@ Let's create a simple test and build a report. For requests, you will use the **
 
 ```python
 import requests
-from swagger_coverage.coverage import Swagger
+from swagger_coverage.coverage import SwaggerCoverage
 from swagger_coverage.deco import swagger
-from swagger_coverage.report import ReportHtml
 
 # swagger data preparation
 swagger_url = "https://api.swaggerhub.com/apis/berpress/flask-rest-api/1.0.0"
-swagger_rep = Swagger(swagger_url)
+api_url = "https://api.swaggerhub.com/apis/"
+swagger_rep = SwaggerCoverage(swagger_url, api_url)
 swagger_rep.create_coverage_data()
 
 
@@ -101,15 +101,12 @@ def register_user(payload: dict):
 
 
 # test
-data = {"username": "test@test.com", "password": "Password"}
+data = {"username": "test2023@test.com", "password": "Password"}
 response = register_user(data)
 assert response.status_code == 201
 
 # create report
-report = ReportHtml(
-    api_url='test', swagger_url=swagger_url, data=swagger_rep.result()
-)
-report.save_html()
+swagger_rep.create_report()
 
 ```
 **swagger data preparation**: Prepare our file data_swagger.yaml, it will be created automatically.
@@ -119,14 +116,8 @@ report.save_html()
 
 **test**: run the test
 
-**create report**: create a report using the **ReportHtml** class.
+**create report**: create a report.
 
-report ReportHtml takes 3 parameters
-```
-    api_url - api url link
-    swagger_url - swagger url link
-    data - test results, use result function from Swagger class, it will return the required value
-```
 
 After that, in the folder **swagger_report** we will receive a report **index.html**.
 
@@ -143,15 +134,12 @@ If you use **pytest**, add this code in conftest.py
 def swagger_checker(request):
     url = request.config.getoption("--swagger-url")
     url_api = request.config.getoption("--api-url")
-    swagger = Swagger(url)
+    swagger = Swagger(url_api, url)
     swagger.create_coverage_data()
     yield
-    report = ReportHtml(api_url=url_api, swagger_url=url, data=swagger.result())
-    report.save_html()
+    swagger.create_report()
 ```
 
 More example with pytest and API tests https://github.com/berpress/python-api-tests
 
 Report example https://github.com/berpress/python-api-tests/tree/main/swagger_report
-
-To be continued ...
