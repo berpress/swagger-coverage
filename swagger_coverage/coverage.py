@@ -153,7 +153,7 @@ class SwaggerCoverage(metaclass=Singleton):
             for status in statuses:
                 for key in status.keys():
                     if key == status_code:
-                        status[key] = status.get("key", 0) + 1
+                        status[key] = status.get(key, 0) + 1
                         return data
         return data
 
