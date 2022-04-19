@@ -8,8 +8,11 @@ def swagger(key):
         @wraps(function)
         def inner(*args, **kwargs):
             res = function(*args, **kwargs)
-            SwaggerCoverage().swagger_check(key, res)
-            return res
+            try:
+                SwaggerCoverage().swagger_check(key, res)
+                return res
+            except AttributeError:
+                return res
 
         return inner
 
