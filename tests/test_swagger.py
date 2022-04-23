@@ -13,29 +13,27 @@ SWAGGER_URL = "https://petstore.swagger.io/v2/swagger.json"
 
 
 class TestSwagger:
-    def test_swagger_files_exist(self):
+    def test_swagger_files_exist(self, path="report"):
         """
         Checking that files have been created
         """
         url = SWAGGER_URL
         status_codes = [200, 400]
-        swagger = SwaggerCoverage(url=url, status_codes=status_codes)
+        swagger = SwaggerCoverage(url=url, status_codes=status_codes, path="/report")
         swagger.create_coverage_data(file_name="swagger_files_exist.yaml")
-        report_dir = os.path.join(
-            dirname(dirname(abspath(__file__))), "swagger_report"
-        )  # noqa
+        report_dir = os.path.join(dirname(dirname(abspath(__file__))), path)  # noqa
         assert exists(report_dir)
 
-    def test_swagger_data(self):
+    def test_swagger_data(self, path="report"):
         """
         Checking swagger data
         """
         url = SWAGGER_URL
         status_codes = [200, 400]
-        swagger = SwaggerCoverage(url=url, status_codes=status_codes)
+        swagger = SwaggerCoverage(url=url, status_codes=status_codes, path=path)
         swagger.create_coverage_data(file_name="swagger_data.yaml")
         report_path = os.path.join(
-            dirname(dirname(abspath(__file__))), "swagger_report", "swagger_data.yaml"
+            dirname(dirname(abspath(__file__))), path, "swagger_data.yaml"
         )  # noqa
         with open(report_path) as f:
             data = yaml.safe_load(f)

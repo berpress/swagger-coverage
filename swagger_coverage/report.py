@@ -25,10 +25,13 @@ class ReportHtml:
                 diff accordion
     """
 
-    def __init__(self, api_url: str = None, swagger_url: str = None, data=None):
+    def __init__(
+        self, path: str, api_url: str = None, swagger_url: str = None, data=None
+    ):
         self.api_url = api_url
         self.swagger_url = swagger_url
         self.data: SwaggerData = data
+        self.path: str = path
 
     _COLOR_RED = "#F47174"
     _COLOR_GREEN = "#60d891"
@@ -343,9 +346,8 @@ class ReportHtml:
         src_dir = os.path.dirname(os.path.abspath(__file__))
         src_library_path = os.path.join(src_dir, "src", "script.js")
         # create dir in project
-        parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        src_path_js = os.path.join(parent_dir, "swagger_report", "src", "script.js")
-        self._create_dir(os.path.join(parent_dir, "swagger_report", "src"))
+        src_path_js = os.path.join(self.path, "src", "script.js")
+        self._create_dir(os.path.join(self.path, "src"))
         shutil.copyfile(src_library_path, src_path_js)
 
     @staticmethod
@@ -366,13 +368,10 @@ class ReportHtml:
         """
         body = self._body()
         html = self.html("Swagger coverage API", body)
-        parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        with open(
-            os.path.join(parent_dir, "swagger_report", file_name), "w"
-        ) as outfile:
+        with open(os.path.join(self.path, file_name), "w") as outfile:
             outfile.write(html)
         if is_copy:
             self._copy_src_folder()
         logger.info(
-            f"The swagger report was successfully saved to the folder: " f"{parent_dir}"
+            f"The swagger report was successfully saved to the folder: " f"{self.path}"
         )

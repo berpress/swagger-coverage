@@ -91,7 +91,8 @@ from swagger_coverage.deco import swagger
 # swagger data preparation
 swagger_url = "https://api.swaggerhub.com/apis/berpress/flask-rest-api/1.0.0"
 api_url = "https://api.swaggerhub.com/apis/"
-swagger_rep = SwaggerCoverage(swagger_url, api_url)
+path='/report' # path to swagger coverage report
+swagger_rep = SwaggerCoverage(api_url=api_url, url=swagger_url, path=path)
 swagger_rep.create_coverage_data()
 
 
@@ -136,7 +137,8 @@ If you use **pytest**, add this code in conftest.py
 def swagger_checker(request):
     url = request.config.getoption("--swagger-url")
     url_api = request.config.getoption("--api-url")
-    swagger = SwaggerCoverage(url_api, url)
+    path = '/report'
+    swagger = SwaggerCoverage(api_url=url_api, url=url, path=path)
     swagger.create_coverage_data()
     yield
     swagger.create_report()

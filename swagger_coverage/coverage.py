@@ -48,12 +48,14 @@ class SwaggerCoverage(metaclass=Singleton):
         url: str = None,
         api_url: str = None,
         status_codes: list = None,
+        path: str = None,
     ):
         """
         Init Swagger Coverage
         :param url:
         :param api_url:
         :param status_codes:
+        :param path:
         """
         self.url = url
         self.path_dict = None
@@ -64,6 +66,16 @@ class SwaggerCoverage(metaclass=Singleton):
             self.status_codes = self._DEFAULT_STATUS_CODE
         else:
             self.status_codes = [int(s) for s in status_codes]
+        self.path = self._prepare_path(path=path)
+
+    def _prepare_path(self, path: str) -> str:
+        if path is None:
+            parent_dir = os.path.abspath(os.path.abspath(os.curdir))
+            return os.path.join(parent_dir, self._SWAGGER_REPORT_DIR)
+        else:
+            parent_dir = os.path.abspath(os.path.abspath(os.curdir))
+            path = path[1:] if path.find("/") == 0 else path
+            return os.path.join(parent_dir, path)
 
     def _save_file(self, data: dict, path_file: str) -> None:
         """
@@ -183,10 +195,10 @@ class SwaggerCoverage(metaclass=Singleton):
         """
         Create coverage data
         """
-        parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        swagger_dir = os.path.join(parent_dir, self._SWAGGER_REPORT_DIR)
-        self._create_dir(swagger_dir)
-        path_to_file = os.path.join(parent_dir, self._SWAGGER_REPORT_DIR, file_name)
+        # parent_dir = os.path.abspath(os.path.abspath(os.curdir))
+        # swagger_dir = os.path.join(self.path, self._SWAGGER_REPORT_DIR)
+        self._create_dir(self.path)
+        path_to_file = os.path.join(self.path, self.path, file_name)
         if exists(path_to_file) is False:
             self._load_swagger()
             self._create_swagger_test_file(is_safe=True, path_file=path_to_file)
@@ -256,6 +268,9 @@ class SwaggerCoverage(metaclass=Singleton):
         :return:
         """
         reporter = ReportHtml(
-            api_url=self.api_url, swagger_url=self.url, data=self._result()
+            api_url=self.api_url,
+            swagger_url=self.url,
+            data=self._result(),
+            path=self.path,
         )
         reporter.save_html()
