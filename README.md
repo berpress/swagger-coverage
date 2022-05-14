@@ -85,8 +85,8 @@ Let's create a simple test and build a report. For requests, you will use the **
 
 ```python
 import requests
-from swagger_coverage.coverage import SwaggerCoverage
-from swagger_coverage.deco import swagger
+from swagger_coverage.src.coverage import SwaggerCoverage
+from swagger_coverage.src.deco import swagger
 
 # swagger data preparation
 swagger_url = "https://api.swaggerhub.com/apis/berpress/flask-rest-api/1.0.0"

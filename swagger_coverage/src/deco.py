@@ -1,6 +1,6 @@
 from functools import wraps
 
-from swagger_coverage.coverage import SwaggerCoverage
+from swagger_coverage.src.check_data import SwaggerChecker
 
 
 def swagger(key):
@@ -9,7 +9,7 @@ def swagger(key):
         def inner(*args, **kwargs):
             res = function(*args, **kwargs)
             try:
-                SwaggerCoverage().swagger_check(key, res)
+                SwaggerChecker().swagger_check(key, res)
                 return res
             except AttributeError:
                 return res

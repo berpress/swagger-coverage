@@ -3,10 +3,10 @@ import argparse
 import logging.config
 import sys
 
-from swagger_coverage.coverage import SwaggerCoverage
-from swagger_coverage.logging import setup
+from swagger_coverage.src.coverage import SwaggerCoverage
+from swagger_coverage.src.logger import setup
 
-logger = logging.getLogger()
+logger = logging.getLogger("swagger")
 
 LOGGER_LEVEL = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
 
@@ -24,8 +24,10 @@ def main():
     parser.add_argument(
         "-l", "--level", help=f"set logging level {LOGGER_LEVEL}", type=str
     )
+    parser.add_argument("-p", "--path", help="spath to report folder", type=str)
     args = parser.parse_args()
     url = args.url
+    path = args.path
     status_codes = args.status_codes
     logging_level = args.level
     if logging_level is None:
@@ -34,7 +36,7 @@ def main():
         raise ValueError("Check logger level")
     setup(logging_level)
     logger.setLevel(logging_level)
-    swagger = SwaggerCoverage(url=url, status_codes=status_codes)
+    swagger = SwaggerCoverage(url=url, status_codes=status_codes, path=path)
     swagger.create_coverage_data()
 
 

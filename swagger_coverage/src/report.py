@@ -3,9 +3,10 @@ import re
 import shutil
 
 import logging
+from datetime import datetime
 from os.path import exists
 
-from swagger_coverage.models import SwaggerData, EndpointStatisticsHtml
+from swagger_coverage.src.models import SwaggerData, EndpointStatisticsHtml
 
 logger = logging.getLogger("swagger")
 
@@ -33,9 +34,9 @@ class ReportHtml:
         self.data: SwaggerData = data
         self.path: str = path
 
-    _COLOR_RED = "#F47174"
-    _COLOR_GREEN = "#60d891"
-    _COLOR_ORANGE = "#F56b02"
+    _COLOR_RED = "#f59993"
+    _COLOR_GREEN = "#d6facf"
+    _COLOR_ORANGE = "#f2b85a"
 
     @staticmethod
     def html(title: str, body: str):
@@ -56,13 +57,21 @@ class ReportHtml:
 
     @staticmethod
     def _navbar():
-        return """
-        <nav class="navbar navbar-dark bg-dark mb-4">
-            <div class="container-md">
-                <a class="navbar-brand" href="#">Swagger coverage</a>
-            </div>
-        </nav>
-        """
+        date_now = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        return f"""
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-2">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">Report created at {date_now}</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    <form class="d-flex">
+                        <input id="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button id="search-button" class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+                </div>
+            </nav>
+        """  # noqa
 
     def _body(self):
         """
@@ -223,6 +232,10 @@ class ReportHtml:
             res = self._create_table_body(count + 1, row)
             table_rows.append(res)
 
+        desc = value.get("description", "-")
+        if desc is None:
+            desc = "-"
+
         return f"""
         <div class="accordion-item">
             <h2 class="accordion-header" id="{endpoint}">
@@ -237,7 +250,7 @@ class ReportHtml:
             data-bs-parent="#accordionFlushExample" data-state="collapse">
                 <div class="accordion-body">
                     <section>
-                        Description: {value.get('description')}
+                        Description: {desc}
                         {self._create_table(''.join(table_rows))}
                     </section>
                 </div>
@@ -322,8 +335,11 @@ class ReportHtml:
         text = []
         spaces = "  "
         for key, values in diff.items():
+            desc = values.get("description", "-")
+            if desc is None:
+                desc = "-"
             text.append(f"{key}:\n")
-            text.append(f'{spaces}description: {values.get("description")}\n')
+            text.append(f"{spaces}description: {desc}\n")
             text.append(f'{spaces}method: {values.get("method")}\n')
             text.append(f'{spaces}path: {values.get("path")}\n')
             text.append(f"{spaces}statuses:\n")
@@ -344,14 +360,14 @@ class ReportHtml:
         """
         # create path from library
         src_dir = os.path.dirname(os.path.abspath(__file__))
-        src_library_path = os.path.join(src_dir, "src", "script.js")
+        src_library_path = os.path.join(src_dir, "files", "script.js")
         # create dir in project
         src_path_js = os.path.join(self.path, "src", "script.js")
         self._create_dir(os.path.join(self.path, "src"))
         shutil.copyfile(src_library_path, src_path_js)
 
     @staticmethod
-    def _camel_terms_to_str(value):
+    def _camel_terms_to_str(value: str):
         """
         From CamelCase to String
         """

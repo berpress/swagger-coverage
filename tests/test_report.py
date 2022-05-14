@@ -2,9 +2,7 @@ import os
 
 from os.path import exists, dirname, abspath
 
-
-from swagger_coverage.coverage import SwaggerCoverage
-
+from swagger_coverage.src.coverage import SwaggerCoverage
 
 SWAGGER_URL = "https://petstore.swagger.io/v2/swagger.json"
 
