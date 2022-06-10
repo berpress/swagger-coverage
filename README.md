@@ -146,4 +146,4 @@ def swagger_checker(request):
 
 More example with pytest and API tests https://github.com/berpress/python-api-tests
 
-Report example https://github.com/berpress/python-api-tests/tree/main/swagger_report
+Report example [https://github.com/berpress/python-api-tests/tree/main/swagger_report](https://github.com/berpress/python-api-tests/tree/main/report)
