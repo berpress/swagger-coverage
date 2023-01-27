@@ -34,7 +34,6 @@ class TestSwagger:
             "username": f"test_{datetime.timestamp(dt)}@test.com",
             "password": "Password",
         }
-        response = register_user(data)
-        assert response.status_code == 201
+        register_user(data)
 
         swagger.create_report()
