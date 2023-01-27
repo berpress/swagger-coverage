@@ -236,6 +236,10 @@ class ReportHtml:
         if desc is None:
             desc = "-"
 
+        avg_execution = value.get("time_executions", "-")
+        if avg_execution is None:
+            avg_execution = "-"
+
         return f"""
         <div class="accordion-item">
             <h2 class="accordion-header" id="{endpoint}">
@@ -250,7 +254,8 @@ class ReportHtml:
             data-bs-parent="#accordionFlushExample" data-state="collapse">
                 <div class="accordion-body">
                     <section>
-                        Description: {desc}
+                        <b>Description:</b> {desc}<br>
+                        <b>Average execution:</b> {str(avg_execution)[:5]} seconds <br>
                         {self._create_table(''.join(table_rows))}
                     </section>
                 </div>
