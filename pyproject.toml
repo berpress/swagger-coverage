@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "test-swagger-coverage"
-version = "0.1.40"
+version = "0.1.43"
 description = "Swagger coverage for API tests"
 authors = ["alexanderlozovoy <berpress@gmail.com>"]
 packages = [{ include = "swagger_coverage" }]
@@ -12,6 +12,7 @@ python = "^3.8"
 requests = "^2.27.1"
 PyYAML = "^6.0"
 attrs = "^21.4.0"
+Jinja2 = "^3.1.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.1"

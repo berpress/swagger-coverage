@@ -93,6 +93,27 @@ class SwaggerCoverage(metaclass=Singleton):
         self.data.swagger_data = data_new
         logger.info("Data coverage creation completed successfully")
 
+    def save_results(self):
+        """
+        Save result in json file
+        :return:
+        """
+        paths = self.prepare.load_swagger(self.url)
+        if self.prepare_data is None:
+            self.prepare_data = self.prepare.prepare_swagger_data(
+                data=paths, status_codes=self.status_codes
+            )
+        self.report(
+            api_url=self.api_url,
+            swagger_url=self.url,
+            data=self.diff.result_diff(
+                self.data, self.data.swagger_data, self.prepare_data
+            ),
+            path=self.path,
+        )
+        self.file.save_json(self.data.swagger_data, self.path)
+        pass
+
     def create_report(self):
         """
         Save result in html file
