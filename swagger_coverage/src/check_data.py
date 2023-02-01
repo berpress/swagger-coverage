@@ -9,7 +9,7 @@ class SwaggerChecker:
     def __init__(self):
         self.data = SwaggerCoverage().data
 
-    def swagger_check(self, key: str, res: Response, time_execution: int) -> None:
+    def swagger_check(self, key: str, res: Response, time_execution: float) -> None:
         """
         Try to check response status code and swagger data
         """
@@ -20,7 +20,7 @@ class SwaggerChecker:
 
     @staticmethod
     def _set_check_result(
-        key: str, status_code: int, data, time_execution: int = 0
+        key: str, status_code: int, data, time_execution: float
     ) -> dict:
         """
         Set check result
@@ -28,10 +28,10 @@ class SwaggerChecker:
         endpoint = data.swagger_data.get(key)
         if endpoint:
             if endpoint.get("time_executions") is None:
-                endpoint["time_executions"] = time_execution
+                endpoint["time_executions"] = [time_execution]
             else:
                 t_exc = endpoint.get("time_executions")
-                endpoint["time_executions"] = (t_exc + time_execution) / 2
+                t_exc.append(time_execution)
             statuses = endpoint.get("statuses")
             for status in statuses:
                 for key in status.keys():

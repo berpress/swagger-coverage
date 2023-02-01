@@ -35,5 +35,6 @@ class TestSwagger:
             "password": "Password",
         }
         register_user(data)
+        swagger.save_results()
 
         swagger.create_report()

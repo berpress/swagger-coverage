@@ -1,3 +1,4 @@
+import json
 import os
 from os.path import exists
 
@@ -18,6 +19,15 @@ class FileOperation:
         with open(path_file, "w") as outfile:
             yaml.Dumper.ignore_aliases = lambda self, data: True
             yaml.dump(data, outfile, default_flow_style=False, Dumper=yaml.Dumper)
+
+    @staticmethod
+    def save_json(data: dict, path_file: str):
+        """
+        save json file
+        """
+        file_to_write = path_file + "/results.json"
+        with open(file_to_write, "w") as f:
+            json.dump(data, f)
 
     @staticmethod
     def load_yaml(path_to_file: str) -> dict:

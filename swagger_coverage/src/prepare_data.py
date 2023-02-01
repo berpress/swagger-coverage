@@ -46,6 +46,7 @@ class PrepareData:
                     "path": key,
                     "statuses": status_codes,
                     "tag": v.get("tags")[0],
+                    "time": [],
                 }
         return res_dict
 

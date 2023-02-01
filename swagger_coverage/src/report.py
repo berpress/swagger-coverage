@@ -7,6 +7,7 @@ from datetime import datetime
 from os.path import exists
 
 from swagger_coverage.src.models import SwaggerData, EndpointStatisticsHtml
+from swagger_coverage.src.utils import sort_requests_results
 
 logger = logging.getLogger("swagger")
 
@@ -89,11 +90,15 @@ class ReportHtml:
             accordion.append(res)
         accordions = "".join(accordion)
         diff_accordion = self._create_diff_accordion_html()
+        result_time_request_table = self._result_time_request_table()
+        result_request_header = self._request_buttons_colors()
         result_table = self._result_table(
             endpoints_statistics=endpoints,
             progress_bar=progress_bar,
             accordions=accordions,
             diff_accordion=diff_accordion,
+            description_request_button=result_request_header,
+            request_time_results=result_time_request_table,
         )
         html = [navbar, links, result_table]
         return "".join(html)
@@ -162,6 +167,39 @@ class ReportHtml:
         content = self._div(class_="d-flex justify-content-center", text=data)
         return content
 
+    def _request_buttons_colors(self):
+        """
+        Create file description, like url and other.
+        """
+        button_checked_endpoints = self._button(
+            id_="success",
+            class_="btn btn-light",
+            text="< 0.5 sec",
+            count="",
+        )
+        button_not_checked_endpoints = self._button(
+            id_="not-checked",
+            class_="btn btn-warning",
+            text="0.5-1 sec",
+            count="",
+        )
+        button_not_added_endpoints = self._button(
+            id_="not-added",
+            class_="btn btn-danger",
+            text="> 1 sec",
+            count="",
+        )
+        buttons = "".join(
+            [
+                button_checked_endpoints,
+                button_not_checked_endpoints,
+                button_not_added_endpoints,
+            ]
+        )
+        data = self._button_group(buttons)
+        content = self._div(class_="d-flex justify-content-center", text=data)
+        return content
+
     def _progress_bar_container(self, data):
         success = self._progress_bar(result_class="success", percent=data.success)
         failed = self._progress_bar(result_class="danger", percent=data.failed)
@@ -190,10 +228,15 @@ class ReportHtml:
         accordions: str,
         endpoints_statistics: str,
         diff_accordion: str,
+        description_request_button: str,
+        request_time_results: str,
     ):
         return f"""
         <div class="container px-5">
             <div class="row gx-0">
+            <p class="text-center fs-2" >
+            Swagger API report
+            </p>
             {endpoints_statistics}
             {progress_bar}
             <div id=accordions>
@@ -201,9 +244,44 @@ class ReportHtml:
                 {diff_accordion}
             </div>
             </div>
+            <p class="text-center fs-2" >
+            Request average time
+            </p>
+            {description_request_button}
+            {request_time_results}
         </div>
         """
-        pass
+
+    def _result_time_request_table(self):
+        return f"""
+          <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Result(seconds)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {self._create_request_data_table()}
+  </tbody>
+</table>
+           """
+
+    def _create_request_data_table(self) -> str:
+        results = sort_requests_results(self.data.swagger_data)
+        table_body = []
+        for count, res in enumerate(results):
+            table_body.append('<thead style="font-style: normal">\n')
+            table_body.append(
+                f'<tr class="table-{res.get("color")}" style="font-style: normal">\n'
+            )
+            table_body.append(f'<th scope="col">{count + 1}</th>\n')
+            table_body.append(f'<th scope="col">{res.get("name")}</th>\n')
+            table_body.append(f'<th scope="col">{res.get("results")}</th>\n')
+            table_body.append("</tr>\n")
+            table_body.append("</thead>\n")
+        return "".join(table_body)
 
     @staticmethod
     def _create_section(status: dict) -> str:
@@ -236,10 +314,11 @@ class ReportHtml:
         if desc is None:
             desc = "-"
 
-        avg_execution = value.get("time_executions", "-")
+        avg_execution = value.get("time_executions")
         if avg_execution is None:
-            avg_execution = "-"
-
+            summery_time_exc = "-"
+        else:
+            summery_time_exc = sum(avg_execution) / len(avg_execution)
         return f"""
         <div class="accordion-item">
             <h2 class="accordion-header" id="{endpoint}">
@@ -255,7 +334,7 @@ class ReportHtml:
                 <div class="accordion-body">
                     <section>
                         <b>Description:</b> {desc}<br>
-                        <b>Average execution:</b> {str(avg_execution)[:5]} seconds <br>
+                        <b>Average execution:</b> {str(summery_time_exc)[:5]} seconds <br>
                         {self._create_table(''.join(table_rows))}
                     </section>
                 </div>

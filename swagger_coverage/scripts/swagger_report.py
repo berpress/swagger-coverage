@@ -24,7 +24,7 @@ def main():
     parser.add_argument(
         "-l", "--level", help=f"set logging level {LOGGER_LEVEL}", type=str
     )
-    parser.add_argument("-p", "--path", help="spath to report folder", type=str)
+    parser.add_argument("-p", "--path", help="path to report folder", type=str)
     args = parser.parse_args()
     url = args.url
     path = args.path
