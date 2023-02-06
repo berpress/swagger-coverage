@@ -143,6 +143,9 @@ def swagger_checker(request):
     yield
     swagger.create_report()
 ```
+Also, at the end of the report, you can find a table of average request times for routes
+![](https://github.com/berpress/python-api-tests/blob/main/images/requets_time.png?raw=true)
+
 
 Also, at the end of the report, you can find a table of average request times for routes
 
