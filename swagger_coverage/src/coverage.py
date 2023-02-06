@@ -103,7 +103,7 @@ class SwaggerCoverage(metaclass=Singleton):
     def create_results_from_json(path: str = None):
         # Load data from json files
         parent_dir = os.path.abspath(os.path.abspath(os.curdir))
-        path_to_results = os.path.join(parent_dir, "report", "json_results")
+        path_to_results = os.path.join(parent_dir, "swagger_report", "json_results")
         get_all_files = list(pathlib.Path(path_to_results).glob("*.json"))
         results = merge_results(get_all_files)
         api_url = results.get("api_url")
