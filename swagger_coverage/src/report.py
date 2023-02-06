@@ -174,19 +174,19 @@ class ReportHtml:
         button_checked_endpoints = self._button(
             id_="success",
             class_="btn btn-light",
-            text="< 0.5 sec",
+            text="< 1 sec",
             count="",
         )
         button_not_checked_endpoints = self._button(
             id_="not-checked",
             class_="btn btn-warning",
-            text="0.5-1 sec",
+            text="1-3 sec",
             count="",
         )
         button_not_added_endpoints = self._button(
             id_="not-added",
             class_="btn btn-danger",
-            text="> 1 sec",
+            text="> 3 sec",
             count="",
         )
         buttons = "".join(

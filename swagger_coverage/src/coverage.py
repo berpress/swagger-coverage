@@ -1,13 +1,19 @@
 import logging
 import os
+import pathlib
 from os.path import exists
 
-from swagger_coverage.src.models import SwaggerData
+from swagger_coverage.src.models import (
+    SwaggerData,
+    EndpointStatisticsHtml,
+    PercentStatistic,
+)
 from swagger_coverage.src.report import ReportHtml
 from swagger_coverage.src.singltone_like import Singleton
 from swagger_coverage.src.swagger_diff import DataDiff
 from swagger_coverage.src.files import FileOperation
 from swagger_coverage.src.prepare_data import PrepareData
+from swagger_coverage.src.utils import to_dict, merge_results
 
 logger = logging.getLogger("swagger")
 
@@ -93,7 +99,40 @@ class SwaggerCoverage(metaclass=Singleton):
         self.data.swagger_data = data_new
         logger.info("Data coverage creation completed successfully")
 
-    def save_results(self):
+    @staticmethod
+    def create_results_from_json(path: str = None):
+        # Load data from json files
+        parent_dir = os.path.abspath(os.path.abspath(os.curdir))
+        path_to_results = os.path.join(parent_dir, "report", "json_results")
+        get_all_files = list(pathlib.Path(path_to_results).glob("*.json"))
+        results = merge_results(get_all_files)
+        api_url = results.get("api_url")
+        swagger_url = results.get("swagger_url")
+        summary_dict = results.get("data").get("summary")
+        if not path:
+            path = results.get("path")
+        summary_class = (
+            EndpointStatisticsHtml(
+                endpoints=summary_dict[0].get("endpoints"),
+                checked_endpoints=summary_dict[0].get("checked_endpoints"),
+                not_checked_endpoints=summary_dict[0].get("not_checked_endpoints"),
+                not_added_endpoints=summary_dict[0].get("not_added_endpoints"),
+            ),
+            PercentStatistic(
+                summary_dict[1].get("success"), summary_dict[1].get("failed")
+            ),
+        )
+        data_class = SwaggerData(
+            swagger_data=results.get("data").get("swagger_data"),
+            diff=results.get("data").get("diff"),
+            summary=summary_class,
+        )
+        reporter = ReportHtml(
+            path=path, api_url=api_url, swagger_url=swagger_url, data=data_class
+        )
+        reporter.save_html()
+
+    def save_results(self, path: str = None):
         """
         Save result in json file
         :return:
@@ -103,16 +142,24 @@ class SwaggerCoverage(metaclass=Singleton):
             self.prepare_data = self.prepare.prepare_swagger_data(
                 data=paths, status_codes=self.status_codes
             )
+        data = self.diff.result_diff(
+            self.data, self.data.swagger_data, self.prepare_data
+        )
         self.report(
             api_url=self.api_url,
             swagger_url=self.url,
-            data=self.diff.result_diff(
-                self.data, self.data.swagger_data, self.prepare_data
-            ),
+            data=data,
             path=self.path,
         )
-        self.file.save_json(self.data.swagger_data, self.path)
-        pass
+        if path is None:
+            path = self.path
+        data_dict = {
+            "data": to_dict(self.data),
+            "api_url": self.api_url,
+            "swagger_url": self.url,
+            "path": self.path,
+        }
+        self.file.save_json(data_dict, path)
 
     def create_report(self):
         """

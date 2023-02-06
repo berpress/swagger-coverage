@@ -144,6 +144,8 @@ def swagger_checker(request):
     swagger.create_report()
 ```
 
+Also, at the end of the report, you can find a table of average request times for routes
+
 More example with pytest and API tests https://github.com/berpress/python-api-tests
 
 Report example [https://github.com/berpress/python-api-tests/tree/main/swagger_report](https://github.com/berpress/python-api-tests/tree/main/report)

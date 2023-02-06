@@ -36,5 +36,5 @@ class TestSwagger:
         }
         register_user(data)
         swagger.save_results()
-
+        swagger.create_results_from_json()
         swagger.create_report()
