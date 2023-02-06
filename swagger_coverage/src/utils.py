@@ -34,12 +34,72 @@ def to_dict(data) -> dict:
     return json.loads(json.dumps(data, default=lambda o: o.__dict__))
 
 
+def _get_summary(data):
+    summary_res_endpoints = data.get("data").get("summary")[0]
+    summary_percent = data.get("data").get("summary")[1]
+    endpoints = summary_res_endpoints.get("endpoints")
+    checked_endpoints = summary_res_endpoints.get("checked_endpoints")
+    not_checked_endpoints = summary_res_endpoints.get("not_checked_endpoints")
+    not_added_endpoints = summary_res_endpoints.get("not_added_endpoints")
+    success = summary_percent.get("success")
+    failed = summary_percent.get("failed")
+    return (
+        endpoints,
+        checked_endpoints,
+        not_checked_endpoints,
+        not_added_endpoints,
+        success,
+        failed,
+    )
+
+
 def merge_results(paths: list):
     results = []
     for path in paths:
         results.append(FileOperation.load_json(str(path)))
     summary_res = {}
     for res in results:
-        summary_res = res | summary_res
-        pass
+        if summary_res.get("summary") is None:
+            summary_res["data"] = {"summary": res.get("data").get("summary")}
+        else:
+            (
+                endpoints,
+                checked_endpoints,
+                not_checked_endpoints,
+                not_added_endpoints,
+                success,
+                failed,
+            ) = _get_summary(res)
+            summary_res_endpoints = summary_res.get("data").get("summary")[0]
+            summary_percent = summary_res.get("data").get("summary")[1]
+            summary_res_endpoints["endpoints"] = (
+                summary_res_endpoints["endpoints"] + endpoints
+            )
+            summary_res_endpoints["checked_endpoints"] = (
+                summary_res_endpoints["checked_endpoints"] + checked_endpoints
+            )
+            summary_res_endpoints["not_checked_endpoints"] = (
+                summary_res_endpoints["not_checked_endpoints"] + not_checked_endpoints
+            )
+            summary_res_endpoints["not_added_endpoints"] = (
+                summary_res_endpoints["not_added_endpoints"] + not_added_endpoints
+            )
+            summary_percent["success"] = summary_percent["success"] + success
+            summary_percent["failed"] = summary_percent["failed"] + failed
+        if summary_res.get("data").get("swagger_data") is None:
+            summary_res.get("data")["swagger_data"] = res.get("data").get(
+                "swagger_data"
+            )
+        if summary_res.get("data").get("diff") is None:
+            summary_res.get("data")["diff"] = res.get("data").get("diff")
+        summary_res.get("data")["diff"] = res.get("data").get("diff") | summary_res.get(
+            "data"
+        ).get("diff")
+        summary_res.get("data")["swagger_data"] = res.get("data").get(
+            "swagger_data"
+        ) | summary_res.get("data").get("swagger_data")
+        summary_res["api_url"] = res.get("api_url")
+        summary_res["swagger_url"] = res.get("swagger_url")
+        summary_res["path"] = res.get("path")
+        summary_res["data"]["diff"] = res["data"].get("diff")
     return summary_res
