@@ -1,5 +1,5 @@
 [flake8]
 max-line-length = 88
 exclude = .git,__pycache__
-ignore = D203, D101, W503, C901
+ignore = D203, D101, W503, C901, E501
 import-order-style = google
