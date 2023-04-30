@@ -31,7 +31,7 @@ class Table:
             )
             table_body.append(f'<th scope="col">{count + 1}</th>\n')
             table_body.append(f'<th scope="col">{res.get("name")}</th>\n')
-            table_body.append(f'<th scope="col">{res.get("results")}</th>\n')
+            table_body.append(f'<th scope="col">{str(res.get("results"))[0:5]}</th>\n')
             table_body.append("</tr>\n")
             table_body.append("</thead>\n")
         return "".join(table_body)

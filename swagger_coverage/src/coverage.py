@@ -25,18 +25,18 @@ _DEFAULT_STATUS_CODE = [200, 400, 401, 403]
 class SwaggerCoverage(metaclass=Singleton):
     def __init__(
         self,
-        swagger_url: str = None,
+        url: str = None,
         api_url: str = None,
         status_codes: List[int] = None,
         path: str = _SWAGGER_REPORT_DIR,
     ):
         """
-        :param swagger_url: Swagger url, example https://petstore.swagger.io/v2/swagger.json # noqa
+        :param url: Swagger url, example https://petstore.swagger.io/v2/swagger.json # noqa
         :param api_url: Api url, example https://petstore3.swagger.io/
         :param status_codes: List off status codes, example [200, 400]
         :param path: path to
         """
-        self.swagger_url = swagger_url
+        self.swagger_url = url
         self.api_url = api_url
         if status_codes is None:
             self.status_codes = _DEFAULT_STATUS_CODE
@@ -69,15 +69,16 @@ class SwaggerCoverage(metaclass=Singleton):
         prepare = PrepareData()
         self.data.swagger_data = prepare.prepare_check_file_data(dict_data)
 
-    def save_results(self, data) -> str:
-        results = SwaggerResults(data)
+    def save_results(self) -> str:
+        results = SwaggerResults(self)
         return results.save_results(self.path)
 
     def create_report(self, path=_SWAGGER_REPORT_DIR, report_type="html"):
         # merge results
         result_path = f"{path}/json_results"
         if not is_file_exist(result_path):
-            self.save_results(self)
+            create_dir(self.path)
+        self.save_results()
         result_paths = get_json_result_path(path=result_path)
         load_results = LoadSwaggerResults()
         merge_result = load_results.merge_results(result_paths)
