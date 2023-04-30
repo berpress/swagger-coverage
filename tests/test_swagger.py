@@ -29,7 +29,7 @@ def test_inc_passed_route():
     :return:
     """
     status_codes = [200, 404]
-    swagger = SwaggerCoverage(swagger_url=SWAGGER_URL_2, status_codes=status_codes)
+    swagger = SwaggerCoverage(url=SWAGGER_URL_2, status_codes=status_codes)
     swagger.create_coverage_data(file_name="swagger_files_exist.yaml")
 
     res = get_pet_by_id()
@@ -52,7 +52,7 @@ def test_check_file_exist():
     name = "swagger_check_file_exist"
     status_codes = [200, 404]
     swagger = SwaggerCoverage(
-        swagger_url=SWAGGER_URL_2,
+        url=SWAGGER_URL_2,
         status_codes=status_codes,
     )
     swagger.create_coverage_data(file_name=f"{name}.yaml")
@@ -69,7 +69,7 @@ def test_check_file_data():
     name = "swagger_check_file_data"
     status_codes = [200, 404]
     swagger = SwaggerCoverage(
-        swagger_url=SWAGGER_URL_2,
+        url=SWAGGER_URL_2,
         status_codes=status_codes,
     )
     swagger.create_coverage_data(file_name=f"{name}.yaml")
@@ -83,12 +83,12 @@ def test_save_results():
     name = "swagger_check_save_results"
     status_codes = [200, 404]
     swagger = SwaggerCoverage(
-        swagger_url=SWAGGER_URL_2,
+        url=SWAGGER_URL_2,
         status_codes=status_codes,
     )
     swagger.create_coverage_data(file_name=f"{name}.yaml")
     get_pet_by_id()
-    file_path = swagger.save_results(swagger)
+    file_path = swagger.save_results()
     assert is_file_exist(file_path)
     swagger.__class__.clear()
     delete_after_test()
@@ -98,7 +98,7 @@ def test_create_html_report_with_save_file():
     name = "swagger_check_create_html_report"
     status_codes = [200, 404]
     swagger = SwaggerCoverage(
-        swagger_url=SWAGGER_URL_2,
+        url=SWAGGER_URL_2,
         status_codes=status_codes,
         api_url="https://petstore.swagger.io/",
     )
@@ -119,7 +119,7 @@ def test_check_open_api():
     name = "swagger_check_file_exist"
     status_codes = [200, 404]
     swagger = SwaggerCoverage(
-        swagger_url=OPEN_API_URL, status_codes=status_codes, api_url="xxxx"
+        url=OPEN_API_URL, status_codes=status_codes, api_url="xxxx"
     )
     swagger.create_coverage_data(file_name=f"{name}.yaml")
     swagger.create_report()

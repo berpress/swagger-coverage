@@ -17,12 +17,7 @@ def load_swagger(url: str) -> SwaggerResponse:
     res = requests.get(url)
     if res.status_code == 200:
         try:
-            if res.json().get("swagger"):
-                type_swagger = "swagger"
-            elif res.json().get("openapi"):
-                type_swagger = "openapi"
-            else:
-                raise ValueError("Type of file is not defined")
+            type_swagger = 'swagger' # FIXME
             data = yaml.safe_load(res.text)
             return SwaggerResponse(paths=data.get("paths"), swagger_type=type_swagger)
         except Exception:
