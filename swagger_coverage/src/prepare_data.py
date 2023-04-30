@@ -1,54 +1,51 @@
-from typing import Dict
-
-import requests
-
 import logging
 
-import yaml
+from swagger_coverage.src.models.swagger_data import SwaggerResponse
 
 logger = logging.getLogger("swagger")
 
 
-class PrepareData:
-    @staticmethod
-    def load_swagger(url: str) -> Dict:
-        """
-        Load and get swagger data
-        """
-        logger.info(f"Start load swagger {url}")
-        res = requests.get(url)
-        if res.status_code == 200:
-            try:
-                data = yaml.safe_load(res.text)
-                return data.get("paths")
-            except Exception:
-                raise ValueError("Couldn't load yaml")
-        else:
-            logger.error(f"Couldn't get the file, status code is {res.status_code}")
+def _prepare_swagger(data, status_codes):
+    res_dict = {}
+    for key, value in data.items():
+        list_values = list(value.values())
+        for values in list_values:
+            res_dict[values.get("operationId")] = []
+        for method, description in value.items():
+            res_dict[description.get("operationId")] = {
+                "method": method.upper(),
+                "description": description.get("description"),
+                "path": key,
+                "statuses": status_codes,
+                "tag": description.get("tags")[0],
+            }
+    return res_dict
 
-    @staticmethod
-    def prepare_swagger_data(data, status_codes: list) -> dict:
+
+def _prepare_openapi(data, status_codes):
+    res_dict = {}
+    uuid = 1
+    for key, value in data.items():
+        for method, description in value.items():
+            res_dict[uuid] = {
+                "method": method.upper(),
+                "description": description.get("summary"),
+                "path": key,
+                "statuses": status_codes,
+                "tag": description.get("tags")[0],
+            }
+            uuid = uuid + 1
+    return res_dict
+class PrepareData:
+    def prepare_swagger_data(self, data: SwaggerResponse, status_codes: list) -> dict:
         """
         Preparing data for tests
         :param status_codes:
         :param data:
         :return: swagger dict
         """
-        res_dict = {}
-        for key, value in data.items():
-            list_values = list(value.values())
-            for values in list_values:
-                res_dict[values.get("operationId")] = []
-            for k, v in value.items():
-                res_dict[v.get("operationId")] = {
-                    "method": k.upper(),
-                    "description": v.get("description"),
-                    "path": key,
-                    "statuses": status_codes,
-                    "tag": v.get("tags")[0],
-                    "time": [],
-                }
-        return res_dict
+        type_swagger = data.swagger_type
+        return self._map_prepare.get(type_swagger)(data.paths, status_codes)
 
     @staticmethod
     def prepare_check_file_data(data: dict) -> dict:
@@ -63,3 +60,6 @@ class PrepareData:
                     new_statuses.append({s: 0})
                 value["statuses"] = new_statuses
         return data
+
+    _map_prepare = {"swagger": _prepare_swagger, "openapi": _prepare_openapi}
+
