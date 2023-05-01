@@ -127,9 +127,9 @@ swagger.create_report()
 **swagger data preparation**: Prepare our file data_swagger.yaml, it will be created automatically.
 
 **function to call a request to the server**:  We will write a user registration call. Declaring a function with a decorator **@swagger("regUser")**.
-**"regUser"** taken from file **data_swagger.yaml**, this is unique id of our endpoint.
+**"getPetById"** taken from file **data_swagger.yaml**, this is unique id of our endpoint.
 
-**test**: run the test
+**get_pet_by_id**: run the test (our request)
 
 **create report**: create a report.
 
