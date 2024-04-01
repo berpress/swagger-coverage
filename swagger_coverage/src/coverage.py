@@ -24,11 +24,12 @@ _DEFAULT_STATUS_CODE = [200, 400, 401, 403]
 
 class SwaggerCoverage(metaclass=Singleton):
     def __init__(
-        self,
-        url: str = None,
-        api_url: str = None,
-        status_codes: List[int] = None,
-        path: str = _SWAGGER_REPORT_DIR,
+            self,
+            url: str = None,
+            urls: List[str] = None,
+            api_url: str = None,
+            status_codes: List[int] = None,
+            path: str = _SWAGGER_REPORT_DIR,
     ):
         """
         :param url: Swagger url, example https://petstore.swagger.io/v2/swagger.json # noqa
@@ -36,7 +37,7 @@ class SwaggerCoverage(metaclass=Singleton):
         :param status_codes: List off status codes, example [200, 400]
         :param path: path to
         """
-        self.swagger_url = url
+        self.swagger_url = self._select_urls(url, urls)
         self.api_url = api_url
         if status_codes is None:
             self.status_codes = _DEFAULT_STATUS_CODE
@@ -63,6 +64,13 @@ class SwaggerCoverage(metaclass=Singleton):
             )
             save_yaml(path_file=self.path_to_file, data=prepare_data)
         self._prepare_exist_swagger()
+
+    def _select_urls(self, url: str, urls: str) -> List[str]:
+        if url:
+            return [url]
+        if len(urls) > 0:
+            return urls
+        raise ValueError("Add swagger url/urls")
 
     def _prepare_exist_swagger(self):
         dict_data = load_yaml(path_to_file=self.path_to_file)
