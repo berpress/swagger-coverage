@@ -65,12 +65,12 @@ class SwaggerCoverage(metaclass=Singleton):
             save_yaml(path_file=self.path_to_file, data=prepare_data)
         self._prepare_exist_swagger()
 
-    def _select_urls(self, url: str, urls: str) -> List[str]:
+    def _select_urls(self, url: str, urls: str):
         if url:
             return [url]
         if len(urls) > 0:
             return urls
-        raise ValueError("Add swagger url/urls")
+        return None
 
     def _prepare_exist_swagger(self):
         dict_data = load_yaml(path_to_file=self.path_to_file)
