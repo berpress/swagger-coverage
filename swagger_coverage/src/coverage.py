@@ -68,7 +68,7 @@ class SwaggerCoverage(metaclass=Singleton):
     def _select_urls(self, url: str, urls: str):
         if url:
             return [url]
-        if len(urls) > 0:
+        if urls:
             return urls
         return None
 
